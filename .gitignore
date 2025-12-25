@@ -1,0 +1,29 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data (do not commit processed data)
+data/processed/
+data/raw/*.csv
+
+# Outputs
+outputs/
+logs/
+
+# Environment files
+.env
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+
+# Conda environments (safety)
+env/
+venv/
