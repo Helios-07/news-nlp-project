@@ -1,12 +1,5 @@
 import torch
-from transformers import AutoTokenizer
-from pathlib import Path
-from src.models.classifier import NewsClassifier
-
-
-BASE_DIR=Path(__file__).resolve().parents[2]
-
-MODEL_PATH=BASE_DIR/ 'outputs'/'models'/'best_model.pt'
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 MODEL_NAME = "distilbert-base-uncased"
 NUM_LABELS = 5
@@ -20,49 +13,48 @@ LABEL_MAP = {
     4: "technology"
 }
 
-device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
-#Load Model and Tokenizer
-tokenizer=AutoTokenizer.from_pretrained(MODEL_NAME)
-
-model=NewsClassifier(
-    model_name=MODEL_NAME,
+model = AutoModelForSequenceClassification.from_pretrained(
+    MODEL_NAME,
     num_labels=NUM_LABELS
 )
 
-model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
 model.to(device)
 model.eval()
 
-
-#Predict Function
-def predict(text:str)->str:
-    encoding=tokenizer(
+# Prediction function
+def predict(text: str) -> str:
+    encoding = tokenizer(
         text,
         max_length=MAX_LEN,
-        padding='max_length',
+        padding="max_length",
         truncation=True,
-        return_tensors='pt'
+        return_tensors="pt"
     )
 
-    input_ids=encoding['input_ids'].to(device)
-    attention_mask=encoding['attention_mask'].to(device)
-
+    input_ids = encoding["input_ids"].to(device)
+    attention_mask = encoding["attention_mask"].to(device)
 
     with torch.no_grad():
-        logits=model(input_ids,attention_mask)
-        pred=torch.argmax(logits, dim=1).item()
+        outputs = model(
+            input_ids=input_ids,
+            attention_mask=attention_mask
+        )
+        logits = outputs.logits
+        pred = torch.argmax(logits, dim=1).item()
 
     return LABEL_MAP[pred]
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     sample_text = """
     The government announced new economic reforms aimed at boosting
     foreign investment and stabilizing the financial markets.
     """
 
-    category=predict(sample_text)
+    category = predict(sample_text)
     print(f"Predicted Category: {category}")
