@@ -149,6 +149,17 @@ The web application allows users to:
 
 ## 👤 Author
 
-**Aman Natial**
+**Aman Nautiyal**
 GitHub: [Helios‑07](https://github.com/Helios-07)
+
+
+> ⚠️ Note: The deployed Streamlit demo uses a pretrained classifier for lightweight cloud inference.  
+> The fine-tuned model and evaluation results were obtained offline.
+
+
+## 🌐 Live Demo
+
+Try the deployed application here:  
+👉 https://news-nlp-transformer.streamlit.app
+
 
